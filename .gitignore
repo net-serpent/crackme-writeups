@@ -1,0 +1,22 @@
+# Downloaded samples are never committed: re-fetch with tools/fetch_crackme.py
+*.zip
+*.exe
+*.dll
+*.elf
+*.bin
+*.so
+*.dSYM/
+writeups/*/crackme
+writeups/*/crackme[0-9]*
+
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.r2
+writeups/*/lincrackme3-*
+writeups/*/*.tgz
+writeups/*/*.gz
+writeups/*/uck
+writeups/*/tiny-crackme
+writeups/*/drscm1/
