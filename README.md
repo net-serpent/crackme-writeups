@@ -8,6 +8,7 @@ checks the answer against the binary rather than against my own reading of it.
 | crackme | author | | solved |
 |---|---|---|---|
 | [lincrackme3](writeups/lincrackme3) | adrianbn | linux x86-64, 2010 | keygen, `6067-9888-9347-1020` |
+| [ELF - BCeption](writeups/bception) | Yir | linux x86-64, bytecode vm | `3735928559` |
 
 ### how I work on these
 
