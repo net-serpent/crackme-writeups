@@ -9,6 +9,7 @@ checks the answer against the binary rather than against my own reading of it.
 |---|---|---|---|
 | [lincrackme3](writeups/lincrackme3) | adrianbn | linux x86-64, 2010 | keygen, `6067-9888-9347-1020` |
 | [ELF - BCeption](writeups/bception) | Yir | linux x86-64, bytecode vm | `3735928559` |
+| [crackme_1_by_huskyhusky](writeups/huskyhusky) | huskyhusky | linux x86-64, vm | keygen, weighted-sum checksum |
 
 ### how I work on these
 
