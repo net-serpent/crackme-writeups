@@ -11,6 +11,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [ELF - BCeption](writeups/bception) | Yir | linux x86-64, bytecode vm | `3735928559` |
 | [crackme_1_by_huskyhusky](writeups/huskyhusky) | huskyhusky | linux x86-64, vm | keygen, weighted-sum checksum |
 | [tiny_crackme](writeups/tiny-crackme) | yanisto | linux x86, 769 bytes | `b00m` |
+| [drscm1](writeups/drscm1) | Dr.Spliff | linux x86, 2005 | keygen + re-encrypted patch |
 
 ### how I work on these
 
