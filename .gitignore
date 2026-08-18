@@ -20,3 +20,6 @@ writeups/*/*.gz
 writeups/*/uck
 writeups/*/tiny-crackme
 writeups/*/drscm1/
+writeups/*/Arm_crackme/
+writeups/*/__MACOSX/
+writeups/*/1337ARM.bin
