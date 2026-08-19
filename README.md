@@ -14,6 +14,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [drscm1](writeups/drscm1) | Dr.Spliff | linux x86, 2005 | keygen + re-encrypted patch |
 | [arm_crack1](writeups/arm-crack1) | blankwall | linux arm, thumb | `this_is_flag` |
 | [1337_ARM](writeups/1337-arm) | gtksor, 2011 | linux arm | `ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_` |
+| [ZED-Crackme](writeups/zed) | zed-zahir, 2020 | linux x86-64, upx | `C(uiICD@CADDEBNEEDD` |
 
 ### how I work on these
 
