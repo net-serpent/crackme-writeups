@@ -15,6 +15,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [arm_crack1](writeups/arm-crack1) | blankwall | linux arm, thumb | `this_is_flag` |
 | [1337_ARM](writeups/1337-arm) | gtksor, 2011 | linux arm | `ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_` |
 | [ZED-Crackme](writeups/zed) | zed-zahir, 2020 | linux x86-64, upx | `C(uiICD@CADDEBNEEDD` |
+| [KataVM Level 1](writeups/katavm) | Towel, 2021 | linux x86-64, vm | `xNVa2_N07_t3aAlg` |
 
 ### how I work on these
 
