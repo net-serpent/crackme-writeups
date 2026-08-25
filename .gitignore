@@ -26,3 +26,6 @@ writeups/*/1337ARM.bin
 writeups/*/ZED-*.bin
 writeups/*/KataVM*
 writeups/*/*.7z
+writeups/*/*.exe
+writeups/*/Instructions.txt
+writeups/*/readme.txt

@@ -16,17 +16,18 @@ checks the answer against the binary rather than against my own reading of it.
 | [1337_ARM](writeups/1337-arm) | gtksor, 2011 | linux arm | `ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_` |
 | [ZED-Crackme](writeups/zed) | zed-zahir, 2020 | linux x86-64, upx | `C(uiICD@CADDEBNEEDD` |
 | [KataVM Level 1](writeups/katavm) | Towel, 2021 | linux x86-64, vm | `xNVa2_N07_t3aAlg` |
+| [what_is_my_password](writeups/what-is-my-password) | br0ken, 2009 | **windows** x86 | `95718t00w` |
+| [learn_the_first_few_tricks](writeups/first-tricks) | deibiz_xxl, 2005 | **windows** x86 | `[DEIBIZ]` + name patch |
 
 ### how I work on these
 
 I don't run the samples. They're random executables off the internet, and half
 of them target platforms this machine isn't anyway. So: static analysis in
 radare2, and when I need to actually execute something, it goes through Unicorn
-with the libc/libstdc++ imports replaced by python stubs. x86, x86-64 and ARM
-(both Thumb and not) all go through the same harness. `tools/ucelf.py` is
-the harness that does the mapping and stubbing; each writeup's `verify.py` adds
-whatever stubs that particular binary needs and calls the check function
-directly.
+with the libc/libstdc++ imports replaced by python stubs. `tools/ucload.py` is
+the harness that maps the image and does the stubbing; it takes ELF and PE,
+x86, x86-64 and ARM (Thumb or not). Each writeup's `verify.py` adds whatever
+stubs that particular binary needs and calls the check function directly.
 
 The binaries themselves aren't committed. To get one back:
 
