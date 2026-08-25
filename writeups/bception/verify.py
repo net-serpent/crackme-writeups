@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
-from ucelf import Emu                                   # noqa: E402
+from ucload import Emu                                   # noqa: E402
 import solve                                            # noqa: E402
 
 INTERP, CODE, CLEN = 0x400837, 0x400FE0, 0x55

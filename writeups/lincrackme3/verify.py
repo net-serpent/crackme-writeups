@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
-from ucelf import Emu                                   # noqa: E402
+from ucload import Emu                                   # noqa: E402
 import solve                                            # noqa: E402
 
 MAIN = 0x4008A7

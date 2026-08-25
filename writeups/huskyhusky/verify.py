@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
-from ucelf import Emu                                   # noqa: E402
+from ucload import Emu                                   # noqa: E402
 from unicorn import UC_HOOK_CODE, UC_HOOK_INSN          # noqa: E402
 from unicorn.x86_const import (                         # noqa: E402
     UC_X86_INS_SYSCALL, UC_X86_REG_RAX, UC_X86_REG_RCX, UC_X86_REG_RDI,
