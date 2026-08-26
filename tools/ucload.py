@@ -66,8 +66,61 @@ def _parse_pe(raw):
         rawptr, = struct.unpack_from('<I', raw, e + 20)
         if rawsize:
             chunks.append((base + vaddr, raw[rawptr:rawptr + rawsize]))
+    dd = opt + (96 if bits == 32 else 112)          # DataDirectory
+    imp_rva, imp_size = struct.unpack_from('<II', raw, dd + 8)
+    imports = _pe_imports(raw, base, imp_rva, chunks, bits) if imp_rva else {}
     return {'bits': bits, 'arm': False, 'lo': base & ~0xFFF,
-            'hi': (base + imgsize + 0xFFF) & ~0xFFF, 'chunks': chunks}
+            'hi': (base + imgsize + 0xFFF) & ~0xFFF, 'chunks': chunks,
+            'imports': imports}
+
+
+def _pe_imports(raw, base, imp_rva, chunks, bits):
+    """{imported name: address of its IAT slot}, so stubs can be hung on it."""
+    import struct
+
+    def read(va, n):
+        for cbase, data in chunks:
+            if cbase <= va < cbase + len(data):
+                off = va - cbase
+                return data[off:off + n]
+        return b''
+
+    def cstr(va):
+        out = b''
+        while True:
+            c = read(va + len(out), 1)
+            if not c or c == b'\0':
+                return out
+            out += c
+
+    width = 4 if bits == 32 else 8
+    fmt = '<I' if bits == 32 else '<Q'
+    high = 0x80000000 if bits == 32 else 0x8000000000000000
+    out, i = {}, 0
+    while True:
+        d = read(base + imp_rva + i * 20, 20)
+        if len(d) < 20:
+            break
+        lookup, _, _, name_rva, first = struct.unpack('<IIIII', d)
+        if not (lookup or first):
+            break
+        i += 1
+        names = lookup or first
+        k = 0
+        while True:
+            ent = read(base + names + k * width, width)
+            if len(ent) < width:
+                break
+            val, = struct.unpack(fmt, ent)
+            if not val:
+                break
+            slot = base + first + k * width
+            if val & high:
+                out[f'#{val & 0xFFFF}'] = slot          # imported by ordinal
+            else:
+                out[cstr(base + val + 2).decode('latin1')] = slot
+            k += 1
+    return out
 
 
 class Emu:
@@ -78,6 +131,7 @@ class Emu:
     HEAP = 0x900000
     HEAP_SIZE = 0x10000
     RET_MAGIC = 0xDEAD0000
+    FAKE_IMPORTS = 0xF0000000
 
     def __init__(self, path, base=BASE, thumb=True):
         self.base = base
@@ -101,6 +155,7 @@ class Emu:
         uc.mem_map(self.FS_BASE, 0x1000)
         uc.mem_map(self.HEAP, self.HEAP_SIZE)
         uc.mem_map(self.RET_MAGIC & ~0xFFF, 0x1000)
+        uc.mem_map(self.FAKE_IMPORTS, 0x1000)
         if not self.arm and self.bits == 64:
             # stack canary at fs:0x28; unicorn only takes these in 64 bit mode
             uc.reg_write(UC_X86_REG_FS_BASE, self.FS_BASE)
@@ -108,9 +163,15 @@ class Emu:
             uc.mem_write(self.FS_BASE + 0x28, b'\x88\x77\x66\x55\x44\x33\x22\x11')
         self.stubs = {}       # rel addr -> fn(emu), returns rax or None
         self.aborts = {}      # rel addr -> label
+        self.imports = img.get('imports', {})
+        self.stdcall = {}     # stub addr -> argument count to pop on return
+        self._fake = self.FAKE_IMPORTS
         self._brk = self.HEAP
         uc.hook_add(UC_HOOK_CODE, self._hook,
                     begin=base + lo, end=base + lo + span)
+        # import stubs live outside the image, so they need their own hook
+        uc.hook_add(UC_HOOK_CODE, self._hook,
+                    begin=self.FAKE_IMPORTS, end=self.FAKE_IMPORTS + 0x1000)
 
     def alloc(self, data: bytes, align=16) -> int:
         addr = self._brk
@@ -162,6 +223,23 @@ class Emu:
             return fn
         return deco
 
+    def stub_import(self, name, fn=None, argc=0):
+        """Point an IAT slot at an address of our own and stub that.
+
+        PE calls go through `call [iat]`, so there is nothing at a fixed
+        address to hook the way a PLT thunk gives you. Write a made up
+        address into the slot instead and hang the python function there.
+        """
+        def attach(f):
+            slot = self.imports[name]
+            addr = self._fake
+            self._fake += 0x10
+            self.write_word(slot, addr)
+            self.stubs[addr] = f
+            self.stdcall[addr] = argc      # win32 callees clean their own args
+            return f
+        return attach(fn) if fn else attach
+
     def abort_at(self, addr, label):
         self.aborts[self.base + addr] = label
 
@@ -194,6 +272,9 @@ class Emu:
             uc.reg_write(UC_X86_REG_EAX if self.bits == 32 else UC_X86_REG_RAX,
                          rv & (2**self.bits - 1))
         uc.reg_write(UC_X86_REG_EIP if self.bits == 32 else UC_X86_REG_RIP, ret_to)
+        argc = self.stdcall.get(addr, 0)
+        if argc:
+            uc.reg_write(sp_reg, uc.reg_read(sp_reg) + argc * self.wsize)
 
     def call(self, addr, *args, count=1_000_000):
         """rel addr in, rax out. Returns 'abort:<label>' if it bailed."""
