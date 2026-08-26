@@ -29,3 +29,5 @@ writeups/*/*.7z
 writeups/*/*.exe
 writeups/*/Instructions.txt
 writeups/*/readme.txt
+writeups/*/Read?Me.txt
+writeups/*/ReadMe.txt

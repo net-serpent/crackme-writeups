@@ -1,7 +1,0 @@
-The first of my KeygenMe's.
-
-Shouldn't be too easy or difficult for anyone with basic reversing skills, so I rated it accordingly.
-
-Your task is to reverse the algorithm and create a Keygen for it. No patching.
-
-Good luck and have fun.
