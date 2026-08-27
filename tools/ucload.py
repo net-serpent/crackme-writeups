@@ -22,6 +22,9 @@ from unicorn.x86_const import (
 ARG_REGS = (UC_X86_REG_RDI, UC_X86_REG_RSI, UC_X86_REG_RDX,
             UC_X86_REG_RCX, UC_X86_REG_R8, UC_X86_REG_R9)
 ARM_ARGS = (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)
+# win64 passes the first four in rcx/rdx/r8/r9 and reserves 32 bytes of shadow
+MS_ARGS = (UC_X86_REG_RCX, UC_X86_REG_RDX, UC_X86_REG_R8, UC_X86_REG_R9)
+SHADOW = 0x20
 
 
 def parse_image(path):
@@ -69,7 +72,7 @@ def _parse_pe(raw):
     dd = opt + (96 if bits == 32 else 112)          # DataDirectory
     imp_rva, imp_size = struct.unpack_from('<II', raw, dd + 8)
     imports = _pe_imports(raw, base, imp_rva, chunks, bits) if imp_rva else {}
-    return {'bits': bits, 'arm': False, 'lo': base & ~0xFFF,
+    return {'bits': bits, 'arm': False, 'pe': True, 'lo': base & ~0xFFF,
             'hi': (base + imgsize + 0xFFF) & ~0xFFF, 'chunks': chunks,
             'imports': imports}
 
@@ -137,6 +140,7 @@ class Emu:
         self.base = base
         img = parse_image(path)
         self.bits, self.arm, self.thumb = img['bits'], img['arm'], thumb
+        self.msabi = img.get('pe', False) and self.bits == 64
         if self.arm:
             self.uc = uc = Uc(UC_ARCH_ARM,
                               UC_MODE_THUMB if thumb else UC_MODE_ARM)
@@ -214,6 +218,11 @@ class Emu:
             return self.uc.reg_read(ARM_ARGS[i])
         if self.bits == 32:
             return self.read_word(self.uc.reg_read(UC_X86_REG_ESP) + i * 4)
+        if self.msabi:
+            if i < 4:
+                return self.uc.reg_read(MS_ARGS[i])
+            # the fifth argument onwards sits above the shadow space
+            return self.read_word(self.uc.reg_read(UC_X86_REG_RSP) + 8 + i * 8)
         return self.uc.reg_read(ARG_REGS[i])
 
     def stub(self, addr):
@@ -309,6 +318,12 @@ class Emu:
                 self.write_word(sp + 4 + i * 4, val)
             self.write_word(sp, self.RET_MAGIC)
             uc.reg_write(UC_X86_REG_ESP, sp)
+        elif self.msabi:
+            sp = self.STACK_TOP - SHADOW          # callee may spill into it
+            uc.reg_write(UC_X86_REG_RSP, sp)
+            self.write_u64(sp, self.RET_MAGIC)
+            for reg, val in zip(MS_ARGS, args):
+                uc.reg_write(reg, val)
         else:
             uc.reg_write(UC_X86_REG_RSP, self.STACK_TOP)
             self.write_u64(self.STACK_TOP, self.RET_MAGIC)
