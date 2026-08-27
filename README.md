@@ -20,6 +20,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [learn_the_first_few_tricks](writeups/first-tricks) | deibiz_xxl, 2005 | **windows** x86 | `[DEIBIZ]` + name patch |
 | [recoded_keygenme_1](writeups/recoded-keygenme) | recoded | windows x86, asm | keygen |
 | [find the secret text](writeups/find-the-secret) | devoney | windows x86, self-patching | `[_Crack_]`, secret `greed` |
+| [Simple Crackme](writeups/simple-x64) | raxer, 2020 | windows **x86-64** | `BXXGYYYBGIBXX` |
 
 ### how I work on these
 
