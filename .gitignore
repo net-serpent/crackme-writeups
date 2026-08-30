@@ -36,3 +36,7 @@ writeups/*/xorcist
 writeups/*/xorcist.c
 writeups/*/compile.sh
 writeups/*/Keygen.tar.gz
+writeups/keygen-me/task
+writeups/keygen-me/task.unpacked
+writeups/keygen-me/inner.elf
+writeups/*/inner.elf

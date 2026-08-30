@@ -23,6 +23,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [Simple Crackme](writeups/simple-x64) | raxer, 2020 | windows **x86-64** | `BXXGYYYBGIBXX` |
 | [Simple Keygen](writeups/simple-keygen) | Yuri, 2019 | linux x86-64 | keygen, `ABBCCDDEEFFGGHHI` |
 | [XORcist](writeups/xorcist) | S3c_Cult, 2025 | linux x86-64 | `ts_pmo_gng_icl` |
+| [Keygen-Me](writeups/keygen-me) | OTC, 2026 | linux x86-64, upx + dropper | `Cybersphere{Speed_...}` |
 
 ### how I work on these
 
