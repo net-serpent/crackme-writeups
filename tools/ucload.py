@@ -281,8 +281,11 @@ class Emu:
             uc.reg_write(UC_X86_REG_EAX if self.bits == 32 else UC_X86_REG_RAX,
                          rv & (2**self.bits - 1))
         uc.reg_write(UC_X86_REG_EIP if self.bits == 32 else UC_X86_REG_RIP, ret_to)
+        # Only 32-bit stdcall callees pop their own args. x64 (SysV and the MS
+        # ABI both) passes in registers and never cleans stack args, so popping
+        # here would unbalance the stack by argc words per call.
         argc = self.stdcall.get(addr, 0)
-        if argc:
+        if argc and self.bits == 32:
             uc.reg_write(sp_reg, uc.reg_read(sp_reg) + argc * self.wsize)
 
     def call(self, addr, *args, count=1_000_000):
@@ -319,7 +322,11 @@ class Emu:
             self.write_word(sp, self.RET_MAGIC)
             uc.reg_write(UC_X86_REG_ESP, sp)
         elif self.msabi:
-            sp = self.STACK_TOP - SHADOW          # callee may spill into it
+            # Entry rsp must be 8 mod 16, as it is right after a real call from a
+            # 16-aligned caller. Get it wrong and a callee that homes its args to
+            # [rbp+0x10]/[rbp+0x18] lands on the return slot instead of the shadow
+            # space above it, and the function returns into its own argument.
+            sp = ((self.STACK_TOP - SHADOW) & ~0xF) - 8
             uc.reg_write(UC_X86_REG_RSP, sp)
             self.write_u64(sp, self.RET_MAGIC)
             for reg, val in zip(MS_ARGS, args):

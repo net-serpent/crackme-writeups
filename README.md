@@ -24,6 +24,7 @@ checks the answer against the binary rather than against my own reading of it.
 | [Simple Keygen](writeups/simple-keygen) | Yuri, 2019 | linux x86-64 | keygen, `ABBCCDDEEFFGGHHI` |
 | [XORcist](writeups/xorcist) | S3c_Cult, 2025 | linux x86-64 | `ts_pmo_gng_icl` |
 | [Keygen-Me](writeups/keygen-me) | OTC, 2026 | linux x86-64, upx + dropper | `Cybersphere{Speed_...}` |
+| [x or and add](writeups/xor-and-add) | ray33ee, 2026 | windows **x86-64** | keygen, any name, e.g. `adjacent` / `Et6emO57F2v3` |
 
 ### how I work on these
 
