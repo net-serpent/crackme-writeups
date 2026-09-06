@@ -1,5 +1,7 @@
 # crackme-writeups
 
+[![solvers](https://github.com/net-serpent/crackme-writeups/actions/workflows/ci.yml/badge.svg)](https://github.com/net-serpent/crackme-writeups/actions/workflows/ci.yml)
+
 Notes from working through stuff off [crackmes.one](https://crackmes.one).
 
 Each folder has the reconstructed algorithm, the answer, and a script that
@@ -48,7 +50,19 @@ The id is the hex blob in the crackmes.one URL.
 
 ```bash
 brew install radare2
-python3 -m venv .venv && .venv/bin/pip install unicorn pyelftools
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ```
 
-`solve.py` is stdlib only, `verify.py` needs the venv.
+Most `solve.py` are stdlib only; a couple pull in `pyelftools` or `z3`, and every
+`verify.py` needs `unicorn`. All of it is in `requirements.txt`.
+
+### checks
+
+`tools/ci_check.py` runs every solver that doesn't need the sample and confirms it
+still prints the right answer. That plus a byte-compile of everything is what CI
+runs on each push; the four solvers that read the sample to lift constants can't
+run without it, so CI structure-checks those and skips the run.
+
+```bash
+python3 tools/ci_check.py -v
+```

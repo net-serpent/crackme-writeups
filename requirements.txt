@@ -1,0 +1,4 @@
+# What the harness and the solvers need. Pinned to what I run locally.
+unicorn==2.1.4        # ucload.py emulation
+pyelftools==0.33      # ELF segment parsing in ucload.py / a couple of solvers
+z3-solver==5.1.0.0    # katavm inversion
