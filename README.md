@@ -36,7 +36,8 @@ radare2, and when I need to actually execute something, it goes through Unicorn
 with the libc/libstdc++ imports replaced by python stubs. `tools/ucload.py` is
 the harness that maps the image and does the stubbing; it takes ELF and PE,
 x86, x86-64 and ARM (Thumb or not). Each writeup's `verify.py` adds whatever
-stubs that particular binary needs and calls the check function directly.
+stubs that particular binary needs and calls the check function directly. Its
+API and the rest of the shared code are written up in [tools/](tools/README.md).
 
 The binaries themselves aren't committed. To get one back:
 
